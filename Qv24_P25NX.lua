@@ -145,6 +145,20 @@ local hdr_fields =
                                         },
                                         base.HEX
                                     ),
+    p25_IMBE_Voice    =				ProtoField.new (
+                                        "IMBE Codec Data 20 ms", 
+                                        "qv24_p25nx.imbe_voice", 
+                                        ftypes.BYTES, 
+                                        {},
+                                        base.NONE
+									),
+	p25_Source_flag   =			ProtoField.new (
+                                        "Source flag or unk", 
+                                        "qv24_p25nx.src_flag", 
+                                        ftypes.UINT8, 
+                                        {},
+                                        base.HEX 
+									),
     p25_rt_rt_enabled =         ProtoField.new ("RT/RT enabled", "qv24_p25nx.rt_rt", ftypes.UINT8, {
                                             [0x02] = "RT/RT enabled",
                                             [0x04] = "RT/RT disabled",
@@ -357,6 +371,13 @@ local hdr_fields =
                                         base.HEX, 
                                         0x07
                                     ),
+    p25_unknown_3byte =  			ProtoField.new (
+                                        "Unknown_3bytes", 
+                                        "qv24_p25nx.unk_3_byte", 
+                                        ftypes.UINT24, 
+                                        {},
+                                        base.HEX 
+									),
     p25_target_address =            ProtoField.new (
                                         "Target Address/Radio ID", 
                                         "qv24_p25nx.target_address", 
@@ -593,9 +614,19 @@ function p_QV24.dissector (buf, pkt, root)
 
                     local p25_candidate_adj_mm_tvbr = p25_tvbr(9,1)
                     tree:add(hdr_fields.p25_candidate_adj_mm, p25_candidate_adj_mm_tvbr)
+                    
+                    local p25_IMBE_Voice_tvbr = p25_tvbr(10,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(21,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x63 then
-                    local p25_last_byte_tvbr = p25_tvbr(13,1)
-                    tree:add(hdr_fields.p25_last_byte, p25_last_byte_tvbr)
+               	    local p25_IMBE_Voice_tvbr = p25_tvbr(2,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(13,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
+            
                 elseif frame_type == 0x64 then
                     local p25_lcf_tvbr = p25_tvbr(1,1)
                     tree:add(hdr_fields.p25_lcf, p25_lcf_tvbr)
@@ -617,21 +648,59 @@ function p_QV24.dissector (buf, pkt, root)
                     else
                         tree:add("uncommon LCF, will be decoded in later version")
                     end
+                    local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x65 then
                     local p25_target_address_tvbr = p25_tvbr(1,3)
                     tree:add(hdr_fields.p25_target_address, p25_target_address_tvbr)
+                    local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x66 then
                     local p25_source_address_tvbr = p25_tvbr(1,3)
                     tree:add(hdr_fields.p25_source_address, p25_source_address_tvbr)
+                    local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x67 then
-
+                	local p25_unknown_3_byte_tbvr = p25_tvbr(1,3)
+					tree:add(hdr_fields.p25_unknown_3byte, p25_unknown_3_byte_tbvr)
+					local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x68 then
-
+                	local p25_unknown_3_byte_tbvr = p25_tvbr(1,3)
+					tree:add(hdr_fields.p25_unknown_3byte, p25_unknown_3_byte_tbvr)
+					local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x69 then
-
+               		local p25_unknown_3_byte_tbvr = p25_tvbr(1,3)
+					tree:add(hdr_fields.p25_unknown_3byte, p25_unknown_3_byte_tbvr)
+					local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x6a then
                     local p25_low_speed_data_tvbr = p25_tvbr(2,2)
                     tree:add(hdr_fields.p25_low_speed_data, p25_low_speed_data_tvbr)
+                    local p25_IMBE_Voice_tvbr = p25_tvbr(4,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(15,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x6b then
                     local p25_rt_rt_enabled_tvbr = p25_tvbr(2,1)
                     tree:add(hdr_fields.p25_rt_rt_enabled, p25_rt_rt_enabled_tvbr)
@@ -648,29 +717,79 @@ function p_QV24.dissector (buf, pkt, root)
 
                     local p25_candidate_adj_mm_tvbr = p25_tvbr(9,1)
                     tree:add(hdr_fields.p25_candidate_adj_mm, p25_candidate_adj_mm_tvbr)
+                     local p25_IMBE_Voice_tvbr = p25_tvbr(10,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(21,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x6c then
-
+ 				    local p25_IMBE_Voice_tvbr = p25_tvbr(2,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(13,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
+            
                 elseif frame_type == 0x6d then
                     local p25_enc_iv_tvbr = p25_tvbr(1,3)
                     tree:add(hdr_fields.p25_enc_iv, p25_enc_iv_tvbr)
+                    local p25_IMBE_Voice_tvbr = p25_tvbr(2,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(13,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x6e then
                     local p25_enc_iv_tvbr = p25_tvbr(1,3)
                     tree:add(hdr_fields.p25_enc_iv, p25_enc_iv_tvbr)
+                     local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x6f then
                     local p25_enc_iv_tvbr = p25_tvbr(1,3)
                     tree:add(hdr_fields.p25_enc_iv, p25_enc_iv_tvbr)
+                     local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x70 then
                     local p25_algid_tvbr = p25_tvbr(1,1)
                     tree:add(hdr_fields.p25_algid, p25_algid_tvbr)
                     local p25_keyid_tvbr = p25_tvbr(2,2)
                     tree:add(hdr_fields.p25_keyid, p25_keyid_tvbr)
+                     local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0x71 then
+                	local p25_unknown_3_byte_tbvr = p25_tvbr(1,3)
+					tree:add(hdr_fields.p25_unknown_3byte, p25_unknown_3_byte_tbvr)
+                 	local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
 
                 elseif frame_type == 0x72 then
+                	local p25_unknown_3_byte_tbvr = p25_tvbr(1,3)
+					tree:add(hdr_fields.p25_unknown_3byte, p25_unknown_3_byte_tbvr)
+                
+                	local p25_IMBE_Voice_tvbr = p25_tvbr(5,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(16,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
 
                 elseif frame_type == 0x73 then
                     local p25_low_speed_data_tvbr = p25_tvbr(2,2)
                     tree:add(hdr_fields.p25_low_speed_data, p25_low_speed_data_tvbr)
+                     local p25_IMBE_Voice_tvbr = p25_tvbr(4,11)
+                    tree:add(hdr_fields.p25_IMBE_Voice, p25_IMBE_Voice_tvbr)
+                    
+                    local p25_Source_flag_tvbr = p25_tvbr(15,1)
+                    tree:add(hdr_fields.p25_Source_flag, p25_Source_flag_tvbr)
                 elseif frame_type == 0xa1 then
                     local emergency_flags_tvbr = p25_tvbr(9,1)
                     local emergency_flags = emergency_flags_tvbr:uint()
